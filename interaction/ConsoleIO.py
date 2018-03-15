@@ -22,7 +22,7 @@ class ConsoleIO(AbstractIO):
 
         :return the column to process
         """
-        column = input("Welche Spaltennummer soll verarbeitet werden? (1 (für Spalte A), 2 (für Spalte B) usw.): ")
+        column = input("\nWelche Spaltennummer soll verarbeitet werden? (1 (für Spalte A), 2 (für Spalte B) usw.): ")
         # TODO: currently it is only simple console application. In case UI will be added, MVP / MVP should be used
         if not column.isdigit() or int(column) < 1:
             print("Die Spalteneingabe war fehlerhaft. Bitte die Spaltennummer angeben!")
