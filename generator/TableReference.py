@@ -26,6 +26,6 @@ class TableReference(AbstractGenerator):
     def process(self) -> str:
         """ Determines a table row by chance from the referenced table and generates the table result
         :return the generated table result"""
-        referenced_table = self.__spread_access.table_access[self.__table_name]
+        referenced_table = self.__spread_access.get_table(self.__table_name)
         row = referenced_table.get_row_by_chance()
         return row.generate()
