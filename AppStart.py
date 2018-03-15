@@ -40,7 +40,10 @@ def main():
     spread = create_spread_access()
     crawler = create_crawler(spread, io)
 
-    print("=> Zum Beenden der Anwendung Strg+C betätigen!\n")
+    print("#################################################")
+    print("######### RPG Crawler v0.2 (15.03.2018) #########")
+    print("#################################################")
+    print("Info: Zum Beenden der Anwendung Strg+C betätigen!\n")
     while True:
         column = io.determine_column()
         for i in range(1, 6):
