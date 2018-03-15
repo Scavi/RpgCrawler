@@ -6,14 +6,16 @@ import random
 
 
 class Table(object):
-    def __init__(self, spread_access: AbstractSpreadAccess, table_name: str):
+    GSPREAD_READ_RANGE = 10
+    GSPREAD_CHANCE_COLUMN = "A{}:A{}"
+    GSPREAD_TEXT_COLUMN = "B{}:B{}"
+
+    def __init__(self, table_name: str):
         """ Constructor for a table row entry
 
-        :param spread_access the access to the spreads
         :param table_name the name of the table. The name will be also used as identifier of the table and represents
         an excel sheet
         """
-        self.__spread_access = spread_access
         self.__table_name = table_name
         self.__rows = list()
         self.__max_chance = 0
@@ -68,21 +70,26 @@ class Table(object):
         :param excel_sheet the excel sheet that represents the table.
         :return the created table with all the rows
         """
-        chances = excel_sheet.col_values(1)
-        texts = excel_sheet.col_values(2)
-
-        # the number of chances and texts must be identical
-        if len(chances) != len(texts):
-            raise AttributeError(
-                "Illegal configuration! The count of chances {} and texts {} don't match".format(len(chances),
-                                                                                                 len(texts)))
-
         # create the table with all the rows
-        table = Table(spread_access, table_name)
-        i = 0
-        while True:
-            if not texts[i]:
-                break
-            table.add_table_row(TableRowEntry(spread_access, int(chances[i]), texts[i]))
-            i += 1
+        table = Table(table_name)
+        i = 1
+        has_data = True
+        while has_data:
+            # it is quicker to access the sheet in a range (compared to the cells) -> but it is still slow...
+            chances = excel_sheet.range(Table.GSPREAD_CHANCE_COLUMN.format(i, i + Table.GSPREAD_READ_RANGE))
+            texts = excel_sheet.range(Table.GSPREAD_TEXT_COLUMN.format(i, i + Table.GSPREAD_READ_RANGE))
+            for j, tmp in enumerate(chances):
+                text = texts[j].value
+                chance = tmp.value
+                # found the end in the sheet
+                if not text and not chance:
+                    has_data = False
+                    break
+                # illegal configuration (either a chance or the text is missing in the configuration)
+                if not chance or not text:
+                    raise AttributeError(
+                        "Found illegal configuration in the {} in row {}. (Chance = '{}', text = '{}'). ".format(
+                            table_name, i, chance, text) + "Chance and Text must be set both!")
+                table.add_table_row(TableRowEntry(spread_access, int(chance), text))
+            i += Table.GSPREAD_READ_RANGE + 1
         return table
