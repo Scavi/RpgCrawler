@@ -1,4 +1,5 @@
 import abc
+from requests.structures import CaseInsensitiveDict
 
 
 class AbstractSpreadAccess(metaclass=abc.ABCMeta):
@@ -23,7 +24,17 @@ class AbstractSpreadAccess(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def table_access(self) -> dict():
+    def get_table(self, table_name: str):
+        """ this method verifies if a table exists. If yes, the table will be returned. If not, the table will be
+        crawled, cached and returned afterwards
+
+        :param table_name the name of the table
+        :return the table
+        """
+        pass
+
+    @abc.abstractmethod
+    def table_access(self) -> CaseInsensitiveDict():
         """ :return all known table names to their tables"""
         pass
 
