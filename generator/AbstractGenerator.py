@@ -14,12 +14,14 @@ class AbstractGenerator(metaclass=abc.ABCMeta):
         self.__end_index = end_index
         self.__text = text
 
+
     @abc.abstractmethod
     def process(self) -> str:
         """ Generates the value
 
         :return the generated result"""
         pass
+
 
     def replace_offset_of(self, generated_text: str) -> int:
         """ determines the offset between the generated value and the text to replace.
@@ -30,15 +32,18 @@ class AbstractGenerator(metaclass=abc.ABCMeta):
         # 2 because next to the text we have the braces that must be replaced
         return len(generated_text) - (len(self.__text) + 2)
 
+
     @property
     def get_start_index(self):
         """ :return: start the start position in the original text string """
         return self.__start_index
 
+
     @property
     def get_end_index(self):
         """ :return: end the end position in the original text string """
         return self.__end_index
+
 
     @property
     def get_text(self):
