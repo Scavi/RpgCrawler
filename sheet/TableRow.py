@@ -17,6 +17,7 @@ class TableRowEntry(object):
         self.__text = text
         self.__generators = TableRowEntry.analyze_generators(spread_access, text)
 
+
     @staticmethod
     def analyze_generators(spread_access: AbstractSpreadAccess, text: str) -> list:
         """
@@ -48,15 +49,23 @@ class TableRowEntry(object):
                 result.append(TableReference(spread_access, start_index, end_index, generator_match))
         return result
 
+
     def __str__(self) -> str:
         """ :return representation for the class """
         return "{} -> {}".format(self.__chance, self.__text)
+
 
     def __repr__(self) -> str:
         """ :return representation for debugging """
         return self.__str__()
 
-    def generate(self):
+
+    def generate(self) -> str:
+        """ This method generates the text of teh current table row. In case generators (e.g. dice generator)
+        are defines the text will be changed accordingly to the generated value.
+
+        :return the generated value
+        """
         offset = 0
         result = self.__text
         for generator in self.__generators:
@@ -65,10 +74,12 @@ class TableRowEntry(object):
             offset += generator.replace_offset_of(tmp)
         return result
 
+
     @property
     def get_chance(self) -> int:
         """ :return a number that represents the chance / probability of all entries within this table to get picked """
         return self.__chance
+
 
     @property
     def get_text(self) -> str:
