@@ -11,6 +11,7 @@ class AbstractIO(metaclass=abc.ABCMeta):
         """
         pass
 
+
     @abc.abstractmethod
     def print_story_line(self, story_line: str) -> None:
         """ This method prints the story line
@@ -19,6 +20,7 @@ class AbstractIO(metaclass=abc.ABCMeta):
         """
         pass
 
+
     def print_info(self, text: str) -> None:
         """ This method prints a general information for the user
 
@@ -26,10 +28,11 @@ class AbstractIO(metaclass=abc.ABCMeta):
         """
         pass
 
-    @abc.abstractmethod
-    def determine_column(self) -> int:
-        """ This method determines the column in the sheet to process (starting with 1)
 
-        :return the column to process
+    @abc.abstractmethod
+    def iterations(self) -> int:
+        """ This method determines the iterations of the application (e.g. execute 5 times)
+
+        :return the iterations
         """
         pass

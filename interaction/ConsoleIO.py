@@ -1,4 +1,5 @@
 from interaction.AbstractIO import AbstractIO
+from sheet.Table import Table
 
 
 class ConsoleIO(AbstractIO):
@@ -10,22 +11,60 @@ class ConsoleIO(AbstractIO):
         """
         print(context)
 
-    def print_story_line(self, story_line: str) -> None:
+
+    def print_story_line(self, table: Table) -> None:
         """ This method prints the story line with a small indent
 
-        :param story_line the story line to be printed (e.g. you found 2 gold and 20 silver in the chest)
+        :param table the table to process
         """
-        print("\t" + story_line)
+        text = self.create_table_text(table)
+        print(text)
 
-    def determine_column(self) -> int:
-        """ This method determines the column in the sheet to process (starting with 1)
 
-        :return the column to process
+    def create_table_text(self, table: Table) -> str:
+        """ Creates the current text line. Depending on the configuration, the text line contains the table name,
+        an optional static pre text, the generated row and an optional static follow up text.
+        -> e.g. "Freitext vor Tabelle Aktion Freitext nach Tabelle Aktion"
+
+        :param table the table data
+        :return the text to write
         """
-        column = input("\nWelche Spaltennummer soll verarbeitet werden? (1 (für Spalte A), 2 (für Spalte B) usw.): ")
+        # determines the current row by chance
+        table_row = table.get_row_by_chance()
+        row_text = "\t{}:\n".format(table.table_name)
+        if table.pre_text:
+            row_text += "\t{}\n".format(table.pre_text)
+        row_text += "\t{}\n".format(table_row.generate())
+        if table.follow_up_text:
+            row_text += "\t{}\n".format(table.follow_up_text)
+        return row_text
+
+    # def create_table_text(self, table: Table) -> str:
+    #     """ Creates the current text line. Depending on the configuration, the text line contains the table name,
+    #     an optional static pre text, the generated row and an optional static follow up text.
+    #     -> e.g. "Freitext vor Tabelle Aktion Freitext nach Tabelle Aktion"
+    #
+    #     :param table the table data
+    #     :return the text to write
+    #     """
+    #     # determines the current row by chance
+    #     table_row = table.get_row_by_chance()
+    #     row_text = table.table_name + ": "
+    #     if table.pre_text:
+    #         row_text += "{} ".format(table.pre_text)
+    #     row_text += table_row.generate()
+    #     if table.follow_up_text:
+    #         row_text += " {}".format(table.follow_up_text)
+
+    def iterations(self) -> int:
+        """ This method determines the iterations of the application (e.g. execute 5 times)
+
+        :return the iterations
+        """
+        iteration = input("\nWieviele Iterationen sollen durchgeführt werden (0 = Programmende): ")
         # TODO: currently it is only simple console application. In case UI will be added, MVP / MVP should be used
-        if not column.isdigit() or int(column) < 1:
-            print("Die Spalteneingabe war fehlerhaft. Bitte die Spaltennummer angeben!")
-            return self.determine_column()
+        if not iteration.isdigit():
+            print("Die Eingabe war fehlerhaft! Bitte einen numerischen Wert eingeben!")
+            return self.iterations()
         else:
-            return int(column)
+            return int(iteration)
