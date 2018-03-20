@@ -1,4 +1,5 @@
 import os
+import sys
 
 from core.RpgCrawler import RpgCrawler
 from interaction.AbstractIO import AbstractIO
@@ -7,17 +8,27 @@ from sheet.AbstractSpreadAccess import AbstractSpreadAccess
 from sheet.GSpreadAccess import GSpreadAccess
 
 
-def create_spread_access() -> AbstractSpreadAccess:
+def determine_excel_sheet_name() -> str:
+    """ Determines the name of the excel sheet to be crawled from the start parameter of the application
+
+    :return the name of the target excel sheet"""
+    if len(sys.argv) < 2:
+        raise ValueError("Der RpgCrawler erwartet den Namen der Excel-Datei als Aufrufparameter!\n" +
+                         "Beispiel: AppStart.exe RpgCrawler")
+    return str(sys.argv[1]).strip()
+
+
+def create_spread_access(spread_sheet_name: str) -> AbstractSpreadAccess:
     """Creates the access to the spread sheet. Uses the permission file for the spread sheet acces
 
     :return the spread sheet access
     """
     root_path = os.path.dirname(os.path.realpath(__file__))
     permission_path = os.path.join(root_path, 'permissions/RpgCrawler-b8b181033387.json')
-    return GSpreadAccess('RpgCrawler', permission_path)
+    return GSpreadAccess(spread_sheet_name, permission_path)
 
 
-def create_crawler(spread_access: GSpreadAccess, io: AbstractIO) -> RpgCrawler:
+def create_crawler(spread_access: AbstractSpreadAccess, io: AbstractIO) -> RpgCrawler:
     """Creates the crawler that iterates the excel sheets
 
     :param spread_access the spread sheet access
@@ -36,18 +47,21 @@ def create_io():
 
 def main():
     """ The main method of the application. Creates the required objects and initiates the program execution """
+    print("#################################################")
+    print("######### RPG Crawler v0.30 (17.03.2018) ########")
+    print("#################################################")
+
+    excel_sheet_name = determine_excel_sheet_name()
+    spread = create_spread_access(excel_sheet_name)
     io = create_io()
-    spread = create_spread_access()
     crawler = create_crawler(spread, io)
 
-    print("#################################################")
-    print("######### RPG Crawler v0.2 (15.03.2018) #########")
-    print("#################################################")
-    print("Info: Zum Beenden der Anwendung Strg+C betätigen!\n")
     while True:
-        column = io.determine_column()
-        for i in range(1, 6):
-            crawler.crawl(column)
+        iteration = io.iterations()
+        if iteration == 0:
+            break
+        for i in range(1, iteration + 1):
+            crawler.crawl()
 
 
 if __name__ == '__main__':
