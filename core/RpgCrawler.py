@@ -1,5 +1,6 @@
 from interaction.AbstractIO import AbstractIO
 from sheet.AbstractSpreadAccess import AbstractSpreadAccess
+from sheet.GSpreadAccess import GSpreadAccess
 
 
 class RpgCrawler:
@@ -19,5 +20,5 @@ class RpgCrawler:
         self.__formatter.print_story_context(self.__spread_access.story_context())
         for table_name in story_tables:
             # determines the current table (e.g. gems)
-            table = self.__spread_access.table_access[table_name]
+            table = self.__spread_access.get_table(table_name)
             self.__formatter.print_story_line(table)

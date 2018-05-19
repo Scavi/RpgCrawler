@@ -7,7 +7,6 @@ from sheet.AbstractSpreadAccess import AbstractSpreadAccess
 class TableReference(AbstractGenerator):
     PATTERN = "\s*Tabelle:.+"
 
-
     def __init__(self, spread_access: AbstractSpreadAccess, start_index: int, end_index: int, text: str) -> None:
         AbstractGenerator.__init__(self, start_index, end_index, text)
         """ Constructor:
@@ -21,13 +20,20 @@ class TableReference(AbstractGenerator):
             e.g. [3d6] -> throws a d6 3 times. The dice defines the dice to be thrown
         """
         details = re.split("Tabelle:", text.strip(), flags=re.IGNORECASE)
-        self.__table_name = details[1].strip()
+
+        if "#" in details[1]:
+            reference_data = re.split("#", details[1])
+            self.__table_name = reference_data[0].strip()
+            self.__sheet_name = reference_data[1].strip()
+        else:
+            self.__table_name = details[1].strip()
+            self.__sheet_name = "Sheet1"
         self.__spread_access = spread_access
 
 
     def process(self) -> str:
         """ Determines a table row by chance from the referenced table and generates the table result
         :return the generated table result"""
-        referenced_table = self.__spread_access.get_table(self.__table_name)
+        referenced_table = self.__spread_access.get_table(self.__table_name, self.__sheet_name)
         row = referenced_table.get_row_by_chance()
         return row.generate()

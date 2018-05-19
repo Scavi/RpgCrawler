@@ -17,19 +17,28 @@ class AbstractSpreadAccess(metaclass=abc.ABCMeta):
 
 
     @abc.abstractmethod
-    def get_table(self, table_name: str):
-        """ this method verifies if a table exists. If yes, the table will be returned. If not, the table will be
-        crawled, cached and returned afterwards
+    def crawl_sheet_column_in_range(self, table_name: str, sheet_name: str, column_pattern: str, row_pos: int) -> list:
+        """ This method crawls in a specified read range from the given row position and returns the values. Empty lines
+        will be read too.
 
-        :param table_name the name of the table
-        :return the table
+        :param table_name the name of the table to crawl
+        :param sheet_name optional possibility to access the sheet by name in a different excel file
+        :param column_pattern the column range pattern. For example. A{}:A{}
+        :param row_pos the position of the row where we start to crawl
+        :return a list with values.
         """
         pass
 
 
     @abc.abstractmethod
-    def table_access(self) -> CaseInsensitiveDict():
-        """ :return all known table names to their tables"""
+    def get_table(self, table_name: str, sheet_name: str = ""):
+        """ this method verifies if a table exists. If yes, the table will be returned. If not, the table will be
+        crawled, cached and returned afterwards
+
+        :param table_name the name of the table
+        :param sheet_name optional possibility to access the sheet by name in a different excel file
+        :return the table
+        """
         pass
 
 

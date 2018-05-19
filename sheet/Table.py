@@ -85,12 +85,17 @@ class Table(object):
 
 
     @staticmethod
-    def from_sheet(sheet_access: AbstractSpreadAccess, table_name: str, pre_text: str = "", follow_up_text: str = ""):
+    def from_sheet(sheet_access: AbstractSpreadAccess,
+                   table_name: str,
+                   sheet_name: str,
+                   pre_text: str = "",
+                   follow_up_text: str = ""):
         """ This method creates a table object from the given parameters. The excel_sheet has two columns, a chance
         that represents how likely the row will be picked from the table and a text row text that has the information
 
         :param sheet_access the access to the spreads
         :param table_name the name of the table
+        :param sheet_name optional possibility to access the sheet by name in a different excel file
         :param pre_text an optional and static text that will be printed before randomly selected and generated
             table row text
         :param follow_up_text an optional and static text that will be printed after randomly selected and generated
@@ -103,8 +108,10 @@ class Table(object):
         is_reading = True
         while is_reading:
             # it is quicker to access the sheet in a range (compared to the cells) -> but it is still slow...
-            chances = sheet_access.crawl_sheet_column_in_range(table_name, sheet_access.chance_range_column_pattern, i)
-            texts = sheet_access.crawl_sheet_column_in_range(table_name, sheet_access.text_range_column_pattern, i)
+            chances = sheet_access.crawl_sheet_column_in_range(table_name, sheet_name,
+                                                               sheet_access.chance_range_column_pattern, i)
+            texts = sheet_access.crawl_sheet_column_in_range(table_name, sheet_name,
+                                                             sheet_access.text_range_column_pattern, i)
             for j, chance in enumerate(chances):
                 text = texts[j]
                 # found the end in the sheet

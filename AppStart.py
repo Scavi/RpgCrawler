@@ -48,7 +48,7 @@ def create_io():
 def main():
     """ The main method of the application. Creates the required objects and initiates the program execution """
     print("#################################################")
-    print("######### RPG Crawler v0.30 (17.03.2018) ########")
+    print("######### RPG Crawler v0.40 (06.05.2018) ########")
     print("#################################################")
 
     excel_sheet_name = determine_excel_sheet_name()
