@@ -10,7 +10,6 @@ from sheet.GSpreadAccess import GSpreadAccess
 
 def determine_excel_sheet_name() -> str:
     """ Determines the name of the excel sheet to be crawled from the start parameter of the application
-
     :return the name of the target excel sheet"""
     if len(sys.argv) < 2:
         raise ValueError("Der RpgCrawler erwartet den Namen der Excel-Datei als Aufrufparameter!\n" +
@@ -20,7 +19,6 @@ def determine_excel_sheet_name() -> str:
 
 def create_spread_access(spread_sheet_name: str) -> AbstractSpreadAccess:
     """Creates the access to the spread sheet. Uses the permission file for the spread sheet acces
-
     :return the spread sheet access
     """
     root_path = os.path.dirname(os.path.realpath(__file__))
@@ -30,7 +28,6 @@ def create_spread_access(spread_sheet_name: str) -> AbstractSpreadAccess:
 
 def create_crawler(spread_access: AbstractSpreadAccess, io: AbstractIO) -> RpgCrawler:
     """Creates the crawler that iterates the excel sheets
-
     :param spread_access the spread sheet access
     :param io the io interaction interface for the user
     :return the excel sheet crawler
@@ -50,12 +47,10 @@ def main():
     print("#################################################")
     print("######### RPG Crawler v0.40 (06.05.2018) ########")
     print("#################################################")
-
     excel_sheet_name = determine_excel_sheet_name()
     spread = create_spread_access(excel_sheet_name)
     io = create_io()
     crawler = create_crawler(spread, io)
-
     while True:
         iteration = io.iterations()
         if iteration == 0:
