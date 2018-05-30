@@ -1,9 +1,10 @@
 from interaction.AbstractIO import AbstractIO
 from sheet.AbstractSpreadAccess import AbstractSpreadAccess
-from sheet.GSpreadAccess import GSpreadAccess
 
 
 class RpgCrawler:
+    ID = "rpgcrawler.logic"
+
 
     def __init__(self, spread_access: AbstractSpreadAccess, formatter: AbstractIO) -> None:
         """ Constructor
