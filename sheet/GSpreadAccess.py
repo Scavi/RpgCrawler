@@ -1,8 +1,10 @@
 import gspread
+import logging
 from gspread import Worksheet, WorksheetNotFound, SpreadsheetNotFound
 from oauth2client.service_account import ServiceAccountCredentials
 from requests.structures import CaseInsensitiveDict
 
+from core.RpgCrawler import RpgCrawler
 from sheet.AbstractSpreadAccess import AbstractSpreadAccess
 from sheet.Table import Table
 
@@ -14,6 +16,7 @@ class GSpreadAccess(AbstractSpreadAccess):
     START_ROW = int(5)
     DEFAULT_SHEET_NAME = "Sheet1"
     CACHE_TABLE_ACCESS_PATTERN = "{}#{}"
+
 
     def __init__(self, core_excel_sheet_name: str, permission_file: str,
                  scope: str = 'https://spreadsheets.google.com/feeds') -> None:
@@ -33,17 +36,19 @@ class GSpreadAccess(AbstractSpreadAccess):
         self.__context_sheet = self.__core_spread_sheet.sheet1
         self.__core_excel_sheet_name = core_excel_sheet_name
         self.__context_name = ""
+        self.__logger = logging.getLogger(RpgCrawler.ID)
 
 
     def crawl_main_sheet(self) -> list:
-        """This method crawls the main sheet of the generator. The sheet contains static texts and the concatination of
+        """This method crawls the main sheet of the generator. The sheet contains static texts and the concatenation of
         the story sheets. Each story sheet is in the same excel sheet (yet). (e.g. a treasure might contain gems,
         coins, ...). Every row in the column contains a table that is part of the context. The format of the main sheet
         is <referenced_table_sheet> <static pre text (optional)> <static followup text (optional)>
 
         :return a list with all table names in the column
         """
-        column_data = self.__context_sheet.col_values(GSpreadAccess.COLUMN_STORY_TABLES) # TODO optimize: only read few cells ...
+        column_data = self.__context_sheet.col_values(
+            GSpreadAccess.COLUMN_STORY_TABLES)  # TODO optimize: only read few cells ...
         crawled_main_sheets = list()
         row = GSpreadAccess.START_ROW
         for table_name in column_data[4:]:
@@ -99,6 +104,8 @@ class GSpreadAccess(AbstractSpreadAccess):
             raise ValueError(
                 "In der Tabelle '{}' zu dem Sheet '{}'".format(table_name, sheet_name) +
                 " konnten keine Zeilen identifiziert werden.")
+
+        self.__logger.debug("Cache die Tabelle mit dem Namen {}".format(table_name))
         self.__table_cache[table_name] = table
 
 
