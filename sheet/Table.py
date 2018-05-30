@@ -1,5 +1,6 @@
+import logging
 import random
-
+from core.RpgCrawler import RpgCrawler
 from sheet import AbstractSpreadAccess
 from sheet.TableRow import TableRowEntry
 
@@ -20,6 +21,7 @@ class Table(object):
         self.__max_chance = 0
         self.__pre_text = pre_text
         self.__follow_up_text = follow_up_text
+        self.__logger = logging.getLogger(RpgCrawler.ID)
 
 
     def __str__(self) -> str:
@@ -51,10 +53,14 @@ class Table(object):
         chance = random.randint(1, self.__max_chance + 1)
         row = None
         pos = 0
+        self.__logger.debug(
+            "Ermittle in der Tabelle '{}' mit der zufälligen Chance '{}' (von 1 bis {}) eine Zeile.".format(
+                self.table_name, chance, self.__max_chance))
         while chance > 0 and pos < len(self.__rows):
             row = self.__rows[pos]
             chance -= row.get_chance
             pos += 1
+        self.__logger.debug("--> '{}' ".format(row))
         return row
 
 
